@@ -9,7 +9,7 @@ class RoundConstraintLayout @JvmOverloads constructor(context: Context, attrs: A
     private val delegate = RoundViewDelegate(this, context, attrs)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (delegate.isWidthHeightEqual() && width > 0 && height > 0) {
+        if (delegate.isWidthHeightEqual && width > 0 && height > 0) {
             val max = max(width, height)
             val measureSpec = MeasureSpec.makeMeasureSpec(max, MeasureSpec.EXACTLY)
             super.onMeasure(measureSpec, measureSpec)
@@ -21,11 +21,6 @@ class RoundConstraintLayout @JvmOverloads constructor(context: Context, attrs: A
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-
-        if (delegate.isRadiusHalfHeight()) {
-            delegate.setCornerRadius(height / 2)
-        } else {
-            delegate.setBgSelector()
-        }
+        if (delegate.isRadiusHalfHeight) delegate.cornerRadius = height / 2 else delegate.setBgSelector()
     }
 }

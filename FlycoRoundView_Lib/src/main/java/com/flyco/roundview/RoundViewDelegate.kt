@@ -14,31 +14,87 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.withStyledAttributes
 
 class RoundViewDelegate(
-    private val view: View,
-    private val context: Context,
+    val view: View,
+    val context: Context,
     attrs: AttributeSet?,
 ) {
-    private val gdBackground = GradientDrawable()
-    private val gdBackgroundPress = GradientDrawable()
+    val gdBackground = GradientDrawable()
+    val gdBackgroundPress = GradientDrawable()
 
-    private var backgroundColor = 0
-    private var backgroundPressColor = 0
-    private var cornerRadius = 0
-    private var cornerRadiusTL = 0
-    private var cornerRadiusTR = 0
-    private var cornerRadiusBL = 0
-    private var cornerRadiusBR = 0
-    private var strokeWidth = 0
-    private var strokeColor = 0
-    private var strokePressColor = 0
-    private var textPressColor = 0
-    private var isRadiusHalfHeight = false
-    private var isWidthHeightEqual = false
-    private var isRippleEnable = false
-    private val radiusArr = FloatArray(8)
+    var backgroundColor = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var backgroundPressColor = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var cornerRadius = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var cornerRadiusTL = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var cornerRadiusTR = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var cornerRadiusBL = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var cornerRadiusBR = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var strokeWidth = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var strokeColor = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var strokePressColor = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var textPressColor = 0
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var isRadiusHalfHeight = false
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var isWidthHeightEqual = false
+        set(value) {
+            field = value
+            setBgSelector()
+        }
+    var isRippleEnable = false
+    val radiusArr = FloatArray(8)
+
+
+    private var obtainAttributesDone = false
 
     init {
         obtainAttributes(context, attrs)
+        obtainAttributesDone = true
     }
 
     private fun obtainAttributes(context: Context, attrs: AttributeSet?) {
@@ -58,123 +114,6 @@ class RoundViewDelegate(
             cornerRadiusBR = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_BR, 0)
             isRippleEnable = getBoolean(R.styleable.RoundTextView_rv_isRippleEnable, true)
         }
-    }
-
-    fun setBackgroundColor(backgroundColor: Int) {
-        this.backgroundColor = backgroundColor
-        setBgSelector()
-    }
-
-    fun setBackgroundPressColor(backgroundPressColor: Int) {
-        this.backgroundPressColor = backgroundPressColor
-        setBgSelector()
-    }
-
-    fun setCornerRadius(cornerRadius: Int) {
-        this.cornerRadius = dp2px(cornerRadius.toFloat())
-        setBgSelector()
-    }
-
-    fun setStrokeWidth(strokeWidth: Int) {
-        this.strokeWidth = dp2px(strokeWidth.toFloat())
-        setBgSelector()
-    }
-
-    fun setStrokeColor(strokeColor: Int) {
-        this.strokeColor = strokeColor
-        setBgSelector()
-    }
-
-    fun setStrokePressColor(strokePressColor: Int) {
-        this.strokePressColor = strokePressColor
-        setBgSelector()
-    }
-
-    fun setTextPressColor(textPressColor: Int) {
-        this.textPressColor = textPressColor
-        setBgSelector()
-    }
-
-    fun setIsRadiusHalfHeight(isRadiusHalfHeight: Boolean) {
-        this.isRadiusHalfHeight = isRadiusHalfHeight
-        setBgSelector()
-    }
-
-    fun setIsWidthHeightEqual(isWidthHeightEqual: Boolean) {
-        this.isWidthHeightEqual = isWidthHeightEqual
-        setBgSelector()
-    }
-
-    fun setCornerRadius_TL(cornerRadius_TL: Int) {
-        this.cornerRadiusTL = cornerRadius_TL
-        setBgSelector()
-    }
-
-    fun setCornerRadius_TR(cornerRadius_TR: Int) {
-        this.cornerRadiusTR = cornerRadius_TR
-        setBgSelector()
-    }
-
-    fun setCornerRadius_BL(cornerRadius_BL: Int) {
-        this.cornerRadiusBL = cornerRadius_BL
-        setBgSelector()
-    }
-
-    fun setCornerRadius_BR(cornerRadius_BR: Int) {
-        this.cornerRadiusBR = cornerRadius_BR
-        setBgSelector()
-    }
-
-    fun getBackgroundColor(): Int {
-        return backgroundColor
-    }
-
-    fun getBackgroundPressColor(): Int {
-        return backgroundPressColor
-    }
-
-    fun getCornerRadius(): Int {
-        return cornerRadius
-    }
-
-    fun getStrokeWidth(): Int {
-        return strokeWidth
-    }
-
-    fun getStrokeColor(): Int {
-        return strokeColor
-    }
-
-    fun getStrokePressColor(): Int {
-        return strokePressColor
-    }
-
-    fun getTextPressColor(): Int {
-        return textPressColor
-    }
-
-    fun isRadiusHalfHeight(): Boolean {
-        return isRadiusHalfHeight
-    }
-
-    fun isWidthHeightEqual(): Boolean {
-        return isWidthHeightEqual
-    }
-
-    fun getCornerRadius_TL(): Int {
-        return cornerRadiusTL
-    }
-
-    fun getCornerRadius_TR(): Int {
-        return cornerRadiusTR
-    }
-
-    fun getCornerRadius_BL(): Int {
-        return cornerRadiusBL
-    }
-
-    fun getCornerRadius_BR(): Int {
-        return cornerRadiusBR
     }
 
     private fun dp2px(dp: Float): Int {
@@ -209,6 +148,8 @@ class RoundViewDelegate(
     }
 
     fun setBgSelector() {
+        if (!obtainAttributesDone) return
+
         val bg = StateListDrawable()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isRippleEnable) {

@@ -15,7 +15,7 @@ class RoundRelativeLayout @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        if (delegate.isWidthHeightEqual() && width > 0 && height > 0) {
+        if (delegate.isWidthHeightEqual && width > 0 && height > 0) {
             val max = max(width, height)
             val measureSpec = MeasureSpec.makeMeasureSpec(max, MeasureSpec.EXACTLY)
             super.onMeasure(measureSpec, measureSpec)
@@ -27,11 +27,6 @@ class RoundRelativeLayout @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-
-        if (delegate.isRadiusHalfHeight()) {
-            delegate.setCornerRadius(height / 2)
-        } else {
-            delegate.setBgSelector()
-        }
+        if (delegate.isRadiusHalfHeight) delegate.cornerRadius = height / 2 else delegate.setBgSelector()
     }
 }
