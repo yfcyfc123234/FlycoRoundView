@@ -1,27 +1,33 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
-//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
-//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+    ext {
+        // gradle-wrapper.properties
+        // https://gradle.org/releases/
+        // 8.14.3
+
+        // Android Gradle Plugin
+        // https://developer.android.google.cn/build/releases/past-releases/agp-8-8-0-release-notes?hl=en
+        agpVersion = "8.10.0"
+
+        // 配置项目时，请检查 Kotlin Gradle 插件 (KGP) 与可用 Gradle 版本的兼容性。下表列出了Gradle 和 Android Gradle 插件 (AGP) 的最低和最高完全支持版本
+        // https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
+        kotlinVersion = "2.2.10"
+
+        // https://github.com/google/ksp
+        kspVersion = "2.2.10-2.0.2"
     }
 }
 
-allprojects {
-    repositories {
-        jcenter()
-//        maven {
-//            url "http://dl.bintray.com/h07000223/maven"
-//        }
-    }
-}
+plugins {
+    id "com.android.application" version "${agpVersion}" apply false
+    id "com.android.library" version "${agpVersion}" apply false
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    id "org.jetbrains.kotlin.android" version "${kotlinVersion}" apply false
+    id "org.jetbrains.kotlin.kapt" version "${kotlinVersion}" apply false
+    id "org.jetbrains.kotlin.jvm" version "${kotlinVersion}" apply false
+    id "org.jetbrains.kotlin.plugin.serialization" version "${kotlinVersion}" apply false
+
+    id "com.google.devtools.ksp" version "${kspVersion}" apply false
+
+    id 'maven-publish'
 }

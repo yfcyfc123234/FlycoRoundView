@@ -1,13 +1,20 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 36
+    namespace "com.flyco.RoundViewSample"
 
     defaultConfig {
         applicationId "com.flyco.RoundViewSample"
-        minSdkVersion 8
-        targetSdkVersion 23
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
     }
@@ -17,11 +24,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    kotlinOptions {
+        jvmTarget = '21'
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.1.1'
-//    compile 'com.flyco.roundview:FlycoRoundView_Lib:1.1.4@aar'
-    compile project(':FlycoRoundView_Lib')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation project(':FlycoRoundView_Lib')
 }
