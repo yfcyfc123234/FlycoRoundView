@@ -1,34 +1,22 @@
 pluginManagement {
     repositories {
-        maven { url = 'https://mvnrepository.com' }
-        maven { url = 'https://artifact.bytedance.com/repository/pangle' }
-        maven { url = 'https://www.jitpack.io' } // JitPack仓库，可以从GitHub上获取代码并自动构建成库
-        maven { url = 'https://dl.google.com/dl/android/maven2/' } // Google官方仓库
-        maven { url = 'https://maven.aliyun.com/nexus/content/groups/public/' } // 阿里云公共仓库
-        maven { url = 'https://maven.aliyun.com/nexus/content/repositories/releases/' } // 阿里云公共仓库
-        maven { url = 'https://developer.huawei.com/repo/' }
-        google() // Google官方仓库
-        mavenCentral() // Maven中央仓库
-        gradlePluginPortal() // Gradle官方插件仓库
-        maven { url = 'https://artifact.bytedance.com/repository/pangle' }
-        mavenLocal()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
     }
 }
-
-// 在依赖项解析管理中配置仓库地址
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        maven { url = 'https://artifact.bytedance.com/repository/pangle' }
-        maven { url = 'https://www.jitpack.io' } // JitPack仓库，可以从GitHub上获取代码并自动构建成库
-        maven { url = 'https://dl.google.com/dl/android/maven2/' } // Google官方仓库
-        maven { url = 'https://maven.aliyun.com/nexus/content/groups/public/' } // 阿里云公共仓库
-        maven { url = 'https://maven.aliyun.com/nexus/content/repositories/releases/' } // 阿里云公共仓库
-        maven { url = 'https://developer.huawei.com/repo/' }
-        maven { url = 'https://mvnrepository.com' }
-        google() // Google官方仓库
-        mavenCentral() // Maven中央仓库
-        mavenLocal()
+        google()
+        mavenCentral()
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
     }
 }
 
