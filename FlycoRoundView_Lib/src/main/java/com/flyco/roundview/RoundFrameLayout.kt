@@ -6,7 +6,7 @@ import android.widget.FrameLayout
 import kotlin.math.max
 
 /** 用于需要圆角矩形框背景的FrameLayout的情况,减少直接使用FrameLayout时引入的shape资源文件  */
-class RoundFrameLayout @JvmOverloads constructor(
+open class RoundFrameLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs) {

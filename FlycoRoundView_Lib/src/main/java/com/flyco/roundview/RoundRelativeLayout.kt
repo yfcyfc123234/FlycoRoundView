@@ -6,7 +6,7 @@ import android.widget.RelativeLayout
 import kotlin.math.max
 
 /** 用于需要圆角矩形框背景的RelativeLayout的情况,减少直接使用RelativeLayout时引入的shape资源文件  */
-class RoundRelativeLayout @JvmOverloads constructor(
+open class RoundRelativeLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ) : RelativeLayout(context, attrs) {

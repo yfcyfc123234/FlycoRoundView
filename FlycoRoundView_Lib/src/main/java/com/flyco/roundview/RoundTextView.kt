@@ -6,7 +6,7 @@ import android.widget.TextView
 import kotlin.math.max
 
 /** 用于需要圆角矩形框背景的TextView的情况,减少直接使用TextView时引入的shape资源文件  */
-class RoundTextView @JvmOverloads constructor(
+open class RoundTextView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,

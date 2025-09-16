@@ -6,7 +6,7 @@ import android.widget.LinearLayout
 import kotlin.math.max
 
 /** 用于需要圆角矩形框背景的LinearLayout的情况,减少直接使用LinearLayout时引入的shape资源文件  */
-class RoundLinearLayout @JvmOverloads constructor(
+open class RoundLinearLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ) : LinearLayout(context, attrs) {
