@@ -37,3 +37,41 @@ dependencies {
     // ConstraintLayout 布局库，提供了一些强大的布局功能
     compileOnly 'androidx.constraintlayout:constraintlayout:2.2.1'
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+apply plugin: 'maven-publish'
+
+// 全局配置
+def mGroupId = "com.yfc.lib"
+def mArtifactId = "flyco-roundview"
+def mVersion = "1.0.0"
+
+// 发布配置
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = mGroupId
+            artifactId = mArtifactId
+            version = mVersion
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
+
+tasks.register('generateRepo', Zip) {
+    def mGroupIdFileDir = mGroupId.replace(".", "/")
+    def mGroupIdFileName = mGroupId.replace(".", "-")
+    def publishTask = tasks.named('publishReleasePublicationToMavenLocalRepository')
+    from publishTask.map {
+        it.getRepository().getUrl().toString() + mGroupIdFileDir
+    }
+    into mGroupIdFileName
+    archiveFileName.set("${mGroupIdFileName}.zip")
+}
