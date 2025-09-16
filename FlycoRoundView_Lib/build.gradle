@@ -31,6 +31,9 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.core:core-ktx:1.17.0'
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly 'androidx.core:core-ktx:1.17.0'
+    compileOnly 'androidx.core:core-ktx:1.17.0'
+    // ConstraintLayout 布局库，提供了一些强大的布局功能
+    compileOnly 'androidx.constraintlayout:constraintlayout:2.2.1'
 }

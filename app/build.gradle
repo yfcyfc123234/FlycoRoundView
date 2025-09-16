@@ -33,5 +33,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.core:core-ktx:1.17.0'
     implementation 'androidx.appcompat:appcompat:1.7.1'
+    // ConstraintLayout 布局库，提供了一些强大的布局功能
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation project(':FlycoRoundView_Lib')
 }

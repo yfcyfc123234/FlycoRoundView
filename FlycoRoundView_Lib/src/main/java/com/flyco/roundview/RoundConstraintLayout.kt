@@ -2,16 +2,11 @@ package com.flyco.roundview
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import kotlin.math.max
 
-/** 用于需要圆角矩形框背景的LinearLayout的情况,减少直接使用LinearLayout时引入的shape资源文件  */
-class RoundLinearLayout @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-) : LinearLayout(context, attrs) {
-    /** use delegate to set attr  */
-    val delegate = RoundViewDelegate(this, context, attrs)
+class RoundConstraintLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : ConstraintLayout(context, attrs) {
+    private val delegate = RoundViewDelegate(this, context, attrs)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (delegate.isWidthHeightEqual() && width > 0 && height > 0) {

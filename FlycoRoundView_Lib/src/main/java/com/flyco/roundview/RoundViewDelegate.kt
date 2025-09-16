@@ -1,270 +1,269 @@
-package com.flyco.roundview;
+package com.flyco.roundview
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RippleDrawable;
-import android.graphics.drawable.StateListDrawable;
-import android.os.Build;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
+import android.graphics.drawable.StateListDrawable
+import android.os.Build
+import android.util.AttributeSet
+import android.view.View
+import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.core.content.withStyledAttributes
 
-public class RoundViewDelegate {
-    private View view;
-    private Context context;
-    private GradientDrawable gd_background = new GradientDrawable();
-    private GradientDrawable gd_background_press = new GradientDrawable();
-    private int backgroundColor;
-    private int backgroundPressColor;
-    private int cornerRadius;
-    private int cornerRadius_TL;
-    private int cornerRadius_TR;
-    private int cornerRadius_BL;
-    private int cornerRadius_BR;
-    private int strokeWidth;
-    private int strokeColor;
-    private int strokePressColor;
-    private int textPressColor;
-    private boolean isRadiusHalfHeight;
-    private boolean isWidthHeightEqual;
-    private boolean isRippleEnable;
-    private float[] radiusArr = new float[8];
+class RoundViewDelegate(
+    private val view: View,
+    private val context: Context,
+    attrs: AttributeSet?,
+) {
+    private val gdBackground = GradientDrawable()
+    private val gdBackgroundPress = GradientDrawable()
 
-    public RoundViewDelegate(View view, Context context, AttributeSet attrs) {
-        this.view = view;
-        this.context = context;
-        obtainAttributes(context, attrs);
+    private var backgroundColor = 0
+    private var backgroundPressColor = 0
+    private var cornerRadius = 0
+    private var cornerRadiusTL = 0
+    private var cornerRadiusTR = 0
+    private var cornerRadiusBL = 0
+    private var cornerRadiusBR = 0
+    private var strokeWidth = 0
+    private var strokeColor = 0
+    private var strokePressColor = 0
+    private var textPressColor = 0
+    private var isRadiusHalfHeight = false
+    private var isWidthHeightEqual = false
+    private var isRippleEnable = false
+    private val radiusArr = FloatArray(8)
+
+    init {
+        obtainAttributes(context, attrs)
     }
 
-    private void obtainAttributes(Context context, AttributeSet attrs) {
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.RoundTextView);
-        backgroundColor = ta.getColor(R.styleable.RoundTextView_rv_backgroundColor, Color.TRANSPARENT);
-        backgroundPressColor = ta.getColor(R.styleable.RoundTextView_rv_backgroundPressColor, Integer.MAX_VALUE);
-        cornerRadius = ta.getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius, 0);
-        strokeWidth = ta.getDimensionPixelSize(R.styleable.RoundTextView_rv_strokeWidth, 0);
-        strokeColor = ta.getColor(R.styleable.RoundTextView_rv_strokeColor, Color.TRANSPARENT);
-        strokePressColor = ta.getColor(R.styleable.RoundTextView_rv_strokePressColor, Integer.MAX_VALUE);
-        textPressColor = ta.getColor(R.styleable.RoundTextView_rv_textPressColor, Integer.MAX_VALUE);
-        isRadiusHalfHeight = ta.getBoolean(R.styleable.RoundTextView_rv_isRadiusHalfHeight, false);
-        isWidthHeightEqual = ta.getBoolean(R.styleable.RoundTextView_rv_isWidthHeightEqual, false);
-        cornerRadius_TL = ta.getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_TL, 0);
-        cornerRadius_TR = ta.getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_TR, 0);
-        cornerRadius_BL = ta.getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_BL, 0);
-        cornerRadius_BR = ta.getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_BR, 0);
-        isRippleEnable = ta.getBoolean(R.styleable.RoundTextView_rv_isRippleEnable, true);
-
-        ta.recycle();
+    private fun obtainAttributes(context: Context, attrs: AttributeSet?) {
+        context.withStyledAttributes(attrs, R.styleable.RoundTextView) {
+            backgroundColor = getColor(R.styleable.RoundTextView_rv_backgroundColor, Color.TRANSPARENT)
+            backgroundPressColor = getColor(R.styleable.RoundTextView_rv_backgroundPressColor, Int.MAX_VALUE)
+            cornerRadius = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius, 0)
+            strokeWidth = getDimensionPixelSize(R.styleable.RoundTextView_rv_strokeWidth, 0)
+            strokeColor = getColor(R.styleable.RoundTextView_rv_strokeColor, Color.TRANSPARENT)
+            strokePressColor = getColor(R.styleable.RoundTextView_rv_strokePressColor, Int.MAX_VALUE)
+            textPressColor = getColor(R.styleable.RoundTextView_rv_textPressColor, Int.MAX_VALUE)
+            isRadiusHalfHeight = getBoolean(R.styleable.RoundTextView_rv_isRadiusHalfHeight, false)
+            isWidthHeightEqual = getBoolean(R.styleable.RoundTextView_rv_isWidthHeightEqual, false)
+            cornerRadiusTL = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_TL, 0)
+            cornerRadiusTR = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_TR, 0)
+            cornerRadiusBL = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_BL, 0)
+            cornerRadiusBR = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_BR, 0)
+            isRippleEnable = getBoolean(R.styleable.RoundTextView_rv_isRippleEnable, true)
+        }
     }
 
-    public void setBackgroundColor(int backgroundColor) {
-        this.backgroundColor = backgroundColor;
-        setBgSelector();
+    fun setBackgroundColor(backgroundColor: Int) {
+        this.backgroundColor = backgroundColor
+        setBgSelector()
     }
 
-    public void setBackgroundPressColor(int backgroundPressColor) {
-        this.backgroundPressColor = backgroundPressColor;
-        setBgSelector();
+    fun setBackgroundPressColor(backgroundPressColor: Int) {
+        this.backgroundPressColor = backgroundPressColor
+        setBgSelector()
     }
 
-    public void setCornerRadius(int cornerRadius) {
-        this.cornerRadius = dp2px(cornerRadius);
-        setBgSelector();
+    fun setCornerRadius(cornerRadius: Int) {
+        this.cornerRadius = dp2px(cornerRadius.toFloat())
+        setBgSelector()
     }
 
-    public void setStrokeWidth(int strokeWidth) {
-        this.strokeWidth = dp2px(strokeWidth);
-        setBgSelector();
+    fun setStrokeWidth(strokeWidth: Int) {
+        this.strokeWidth = dp2px(strokeWidth.toFloat())
+        setBgSelector()
     }
 
-    public void setStrokeColor(int strokeColor) {
-        this.strokeColor = strokeColor;
-        setBgSelector();
+    fun setStrokeColor(strokeColor: Int) {
+        this.strokeColor = strokeColor
+        setBgSelector()
     }
 
-    public void setStrokePressColor(int strokePressColor) {
-        this.strokePressColor = strokePressColor;
-        setBgSelector();
+    fun setStrokePressColor(strokePressColor: Int) {
+        this.strokePressColor = strokePressColor
+        setBgSelector()
     }
 
-    public void setTextPressColor(int textPressColor) {
-        this.textPressColor = textPressColor;
-        setBgSelector();
+    fun setTextPressColor(textPressColor: Int) {
+        this.textPressColor = textPressColor
+        setBgSelector()
     }
 
-    public void setIsRadiusHalfHeight(boolean isRadiusHalfHeight) {
-        this.isRadiusHalfHeight = isRadiusHalfHeight;
-        setBgSelector();
+    fun setIsRadiusHalfHeight(isRadiusHalfHeight: Boolean) {
+        this.isRadiusHalfHeight = isRadiusHalfHeight
+        setBgSelector()
     }
 
-    public void setIsWidthHeightEqual(boolean isWidthHeightEqual) {
-        this.isWidthHeightEqual = isWidthHeightEqual;
-        setBgSelector();
+    fun setIsWidthHeightEqual(isWidthHeightEqual: Boolean) {
+        this.isWidthHeightEqual = isWidthHeightEqual
+        setBgSelector()
     }
 
-    public void setCornerRadius_TL(int cornerRadius_TL) {
-        this.cornerRadius_TL = cornerRadius_TL;
-        setBgSelector();
+    fun setCornerRadius_TL(cornerRadius_TL: Int) {
+        this.cornerRadiusTL = cornerRadius_TL
+        setBgSelector()
     }
 
-    public void setCornerRadius_TR(int cornerRadius_TR) {
-        this.cornerRadius_TR = cornerRadius_TR;
-        setBgSelector();
+    fun setCornerRadius_TR(cornerRadius_TR: Int) {
+        this.cornerRadiusTR = cornerRadius_TR
+        setBgSelector()
     }
 
-    public void setCornerRadius_BL(int cornerRadius_BL) {
-        this.cornerRadius_BL = cornerRadius_BL;
-        setBgSelector();
+    fun setCornerRadius_BL(cornerRadius_BL: Int) {
+        this.cornerRadiusBL = cornerRadius_BL
+        setBgSelector()
     }
 
-    public void setCornerRadius_BR(int cornerRadius_BR) {
-        this.cornerRadius_BR = cornerRadius_BR;
-        setBgSelector();
+    fun setCornerRadius_BR(cornerRadius_BR: Int) {
+        this.cornerRadiusBR = cornerRadius_BR
+        setBgSelector()
     }
 
-    public int getBackgroundColor() {
-        return backgroundColor;
+    fun getBackgroundColor(): Int {
+        return backgroundColor
     }
 
-    public int getBackgroundPressColor() {
-        return backgroundPressColor;
+    fun getBackgroundPressColor(): Int {
+        return backgroundPressColor
     }
 
-    public int getCornerRadius() {
-        return cornerRadius;
+    fun getCornerRadius(): Int {
+        return cornerRadius
     }
 
-    public int getStrokeWidth() {
-        return strokeWidth;
+    fun getStrokeWidth(): Int {
+        return strokeWidth
     }
 
-    public int getStrokeColor() {
-        return strokeColor;
+    fun getStrokeColor(): Int {
+        return strokeColor
     }
 
-    public int getStrokePressColor() {
-        return strokePressColor;
+    fun getStrokePressColor(): Int {
+        return strokePressColor
     }
 
-    public int getTextPressColor() {
-        return textPressColor;
+    fun getTextPressColor(): Int {
+        return textPressColor
     }
 
-    public boolean isRadiusHalfHeight() {
-        return isRadiusHalfHeight;
+    fun isRadiusHalfHeight(): Boolean {
+        return isRadiusHalfHeight
     }
 
-    public boolean isWidthHeightEqual() {
-        return isWidthHeightEqual;
+    fun isWidthHeightEqual(): Boolean {
+        return isWidthHeightEqual
     }
 
-    public int getCornerRadius_TL() {
-        return cornerRadius_TL;
+    fun getCornerRadius_TL(): Int {
+        return cornerRadiusTL
     }
 
-    public int getCornerRadius_TR() {
-        return cornerRadius_TR;
+    fun getCornerRadius_TR(): Int {
+        return cornerRadiusTR
     }
 
-    public int getCornerRadius_BL() {
-        return cornerRadius_BL;
+    fun getCornerRadius_BL(): Int {
+        return cornerRadiusBL
     }
 
-    public int getCornerRadius_BR() {
-        return cornerRadius_BR;
+    fun getCornerRadius_BR(): Int {
+        return cornerRadiusBR
     }
 
-    protected int dp2px(float dp) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
+    private fun dp2px(dp: Float): Int {
+        val scale = context.resources.displayMetrics.density
+        return (dp * scale + 0.5f).toInt()
     }
 
-    protected int sp2px(float sp) {
-        final float scale = this.context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (sp * scale + 0.5f);
+    private fun sp2px(sp: Float): Int {
+        val scale = this.context.resources.displayMetrics.scaledDensity
+        return (sp * scale + 0.5f).toInt()
     }
 
-    private void setDrawable(GradientDrawable gd, int color, int strokeColor) {
-        gd.setColor(color);
+    private fun setDrawable(gd: GradientDrawable, color: Int, strokeColor: Int) {
+        gd.setColor(color)
 
-        if (cornerRadius_TL > 0 || cornerRadius_TR > 0 || cornerRadius_BR > 0 || cornerRadius_BL > 0) {
-            /**The corners are ordered top-left, top-right, bottom-right, bottom-left*/
-            radiusArr[0] = cornerRadius_TL;
-            radiusArr[1] = cornerRadius_TL;
-            radiusArr[2] = cornerRadius_TR;
-            radiusArr[3] = cornerRadius_TR;
-            radiusArr[4] = cornerRadius_BR;
-            radiusArr[5] = cornerRadius_BR;
-            radiusArr[6] = cornerRadius_BL;
-            radiusArr[7] = cornerRadius_BL;
-            gd.setCornerRadii(radiusArr);
+        if (cornerRadiusTL > 0 || cornerRadiusTR > 0 || cornerRadiusBR > 0 || cornerRadiusBL > 0) {
+            // The corners are ordered top-left, top-right, bottom-right, bottom-left
+            radiusArr[0] = cornerRadiusTL.toFloat()
+            radiusArr[1] = cornerRadiusTL.toFloat()
+            radiusArr[2] = cornerRadiusTR.toFloat()
+            radiusArr[3] = cornerRadiusTR.toFloat()
+            radiusArr[4] = cornerRadiusBR.toFloat()
+            radiusArr[5] = cornerRadiusBR.toFloat()
+            radiusArr[6] = cornerRadiusBL.toFloat()
+            radiusArr[7] = cornerRadiusBL.toFloat()
+            gd.setCornerRadii(radiusArr)
         } else {
-            gd.setCornerRadius(cornerRadius);
+            gd.setCornerRadius(cornerRadius.toFloat())
         }
 
-        gd.setStroke(strokeWidth, strokeColor);
+        gd.setStroke(strokeWidth, strokeColor)
     }
 
-    public void setBgSelector() {
-        StateListDrawable bg = new StateListDrawable();
+    fun setBgSelector() {
+        val bg = StateListDrawable()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isRippleEnable) {
-            setDrawable(gd_background, backgroundColor, strokeColor);
-            RippleDrawable rippleDrawable = new RippleDrawable(
-                    getPressedColorSelector(backgroundColor, backgroundPressColor), gd_background, null);
-            view.setBackground(rippleDrawable);
+            setDrawable(gdBackground, backgroundColor, strokeColor)
+            val rippleDrawable = RippleDrawable(
+                getPressedColorSelector(backgroundColor, backgroundPressColor),
+                gdBackground,
+                null,
+            )
+            view.background = rippleDrawable
         } else {
-            setDrawable(gd_background, backgroundColor, strokeColor);
-            bg.addState(new int[]{-android.R.attr.state_pressed}, gd_background);
-            if (backgroundPressColor != Integer.MAX_VALUE || strokePressColor != Integer.MAX_VALUE) {
-                setDrawable(gd_background_press, backgroundPressColor == Integer.MAX_VALUE ? backgroundColor : backgroundPressColor,
-                        strokePressColor == Integer.MAX_VALUE ? strokeColor : strokePressColor);
-                bg.addState(new int[]{android.R.attr.state_pressed}, gd_background_press);
+            setDrawable(gdBackground, backgroundColor, strokeColor)
+            bg.addState(intArrayOf(-android.R.attr.state_pressed), gdBackground)
+            if (backgroundPressColor != Int.MAX_VALUE || strokePressColor != Int.MAX_VALUE) {
+                setDrawable(
+                    gdBackgroundPress, if (backgroundPressColor == Int.MAX_VALUE) backgroundColor else backgroundPressColor,
+                    if (strokePressColor == Int.MAX_VALUE) strokeColor else strokePressColor,
+                )
+                bg.addState(intArrayOf(android.R.attr.state_pressed), gdBackgroundPress)
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {//16
-                view.setBackground(bg);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                view.background = bg
             } else {
-                //noinspection deprecation
-                view.setBackgroundDrawable(bg);
+                view.setBackgroundDrawable(bg)
             }
         }
 
-        if (view instanceof TextView) {
-            if (textPressColor != Integer.MAX_VALUE) {
-                ColorStateList textColors = ((TextView) view).getTextColors();
-//              Log.d("AAA", textColors.getColorForState(new int[]{-android.R.attr.state_pressed}, -1) + "");
-                ColorStateList colorStateList = new ColorStateList(
-                        new int[][]{new int[]{-android.R.attr.state_pressed}, new int[]{android.R.attr.state_pressed}},
-                        new int[]{textColors.getDefaultColor(), textPressColor});
-                ((TextView) view).setTextColor(colorStateList);
+        if (view is TextView) {
+            if (textPressColor != Int.MAX_VALUE) {
+                val textColors = view.textColors
+                val colorStateList = ColorStateList(
+                    arrayOf(intArrayOf(-android.R.attr.state_pressed), intArrayOf(android.R.attr.state_pressed)),
+                    intArrayOf(textColors.defaultColor, textPressColor),
+                )
+                view.setTextColor(colorStateList)
             }
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private ColorStateList getPressedColorSelector(int normalColor, int pressedColor) {
-        return new ColorStateList(
-                new int[][]{
-                        new int[]{android.R.attr.state_pressed},
-                        new int[]{android.R.attr.state_focused},
-                        new int[]{android.R.attr.state_activated},
-                        new int[]{}
-                },
-                new int[]{
-                        pressedColor,
-                        pressedColor,
-                        pressedColor,
-                        normalColor
-                }
-        );
+    @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
+    private fun getPressedColorSelector(normalColor: Int, pressedColor: Int): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_pressed),
+                intArrayOf(android.R.attr.state_focused),
+                intArrayOf(android.R.attr.state_activated),
+                intArrayOf(),
+            ),
+            intArrayOf(
+                pressedColor,
+                pressedColor,
+                pressedColor,
+                normalColor,
+            )
+        )
     }
 }
