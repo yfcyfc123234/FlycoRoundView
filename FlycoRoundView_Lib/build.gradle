@@ -30,8 +30,6 @@ android {
 dependencies {
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly 'androidx.core:core-ktx:1.17.0'
-    compileOnly 'androidx.core:core-ktx:1.17.0'
-    // ConstraintLayout 布局库，提供了一些强大的布局功能
     compileOnly 'androidx.constraintlayout:constraintlayout:2.2.1'
 }
 
@@ -66,9 +64,7 @@ tasks.register('generateRepo', Zip) {
     def mGroupIdFileDir = mGroupId.replace(".", "/")
     def mGroupIdFileName = mGroupId.replace(".", "-")
     def publishTask = tasks.named('publishReleasePublicationToMavenLocalRepository')
-    from publishTask.map {
-        it.getRepository().getUrl().toString() + mGroupIdFileDir
-    }
+    from publishTask.map { it.getRepository().getUrl().toString() + mGroupIdFileDir }
     into mGroupIdFileName
     archiveFileName.set("${mGroupIdFileName}.zip")
 }
