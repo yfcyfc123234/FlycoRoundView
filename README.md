@@ -8,7 +8,7 @@ A library helps Android built-in views easy and convenient to set round rectangl
 
 ```groovy
 dependencies{
-    implementation 'com.github.yfcyfc123234:FlycoRoundView:1.0.3'
+    implementation 'com.github.yfcyfc123234:FlycoRoundView:1.0.6'
 }
 ```
 
@@ -24,10 +24,11 @@ dependencies{
 | rv_strokePressColor | color |background rectangle stroke press color
 | rv_textPressColor | color |text press color
 | rv_isRadiusHalfHeight | boolean | corner radius is half of height
-| rv_isWidthHeightEqual | boolean | width and height is the same size which is the max value of them
+| rv_isWidthHeightEqual | boolean | width and height is the same size which is the min value of them
 | rv_cornerRadius_TL | dimension | corner radius top left,unit dp
 | rv_cornerRadius_TR | dimension | corner radius top right,unit dp
 | rv_cornerRadius_BL | dimension | corner radius bottom left,unit dp
 | rv_cornerRadius_BR | dimension | corner radius bottom right,unit dp
 | rv_isRippleEnable | boolean | is ripple effect enable for Api21+
+| rv_clipToOutline | boolean | clipToOutline for rv_cornerRadius
 
