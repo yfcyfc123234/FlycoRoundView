@@ -6,20 +6,16 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.graphics.drawable.StateListDrawable
-import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.content.withStyledAttributes
 
-class RoundViewDelegate(
-    val view: View,
-    val context: Context,
-    attrs: AttributeSet?,
-) {
-    val gdBackground = GradientDrawable()
-    val gdBackgroundPress = GradientDrawable()
+class RoundViewDelegate(val view: View, val context: Context, attrs: AttributeSet?) {
+    private val gdBackground = GradientDrawable()
+    private val gdBackgroundPress = GradientDrawable()
+    private val radiusArr = FloatArray(8)
+    private var obtainAttributesDone = false
 
     var backgroundColor = 0
         set(value) {
@@ -31,7 +27,12 @@ class RoundViewDelegate(
             field = value
             setBgSelector()
         }
-    var cornerRadius = 0
+    var cornerRadius
+        get() = cornerRadiusPx
+        set(value) {
+            cornerRadiusPx = dp2px(value.toFloat())
+        }
+    var cornerRadiusPx = 0
         set(value) {
             field = value
             setBgSelector()
@@ -56,7 +57,12 @@ class RoundViewDelegate(
             field = value
             setBgSelector()
         }
-    var strokeWidth = 0
+    var strokeWidth
+        get() = strokeWidthPx
+        set(value) {
+            strokeWidthPx = dp2px(value.toFloat())
+        }
+    var strokeWidthPx = 0
         set(value) {
             field = value
             setBgSelector()
@@ -87,10 +93,10 @@ class RoundViewDelegate(
             setBgSelector()
         }
     var isRippleEnable = false
-    val radiusArr = FloatArray(8)
-
-
-    private var obtainAttributesDone = false
+        set(value) {
+            field = value
+            setBgSelector()
+        }
 
     init {
         obtainAttributes(context, attrs)
@@ -101,8 +107,8 @@ class RoundViewDelegate(
         context.withStyledAttributes(attrs, R.styleable.RoundTextView) {
             backgroundColor = getColor(R.styleable.RoundTextView_rv_backgroundColor, Color.TRANSPARENT)
             backgroundPressColor = getColor(R.styleable.RoundTextView_rv_backgroundPressColor, Int.MAX_VALUE)
-            cornerRadius = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius, 0)
-            strokeWidth = getDimensionPixelSize(R.styleable.RoundTextView_rv_strokeWidth, 0)
+            cornerRadiusPx = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius, 0)
+            strokeWidthPx = getDimensionPixelSize(R.styleable.RoundTextView_rv_strokeWidth, 0)
             strokeColor = getColor(R.styleable.RoundTextView_rv_strokeColor, Color.TRANSPARENT)
             strokePressColor = getColor(R.styleable.RoundTextView_rv_strokePressColor, Int.MAX_VALUE)
             textPressColor = getColor(R.styleable.RoundTextView_rv_textPressColor, Int.MAX_VALUE)
@@ -116,15 +122,7 @@ class RoundViewDelegate(
         }
     }
 
-    private fun dp2px(dp: Float): Int {
-        val scale = context.resources.displayMetrics.density
-        return (dp * scale + 0.5f).toInt()
-    }
-
-    private fun sp2px(sp: Float): Int {
-        val scale = this.context.resources.displayMetrics.scaledDensity
-        return (sp * scale + 0.5f).toInt()
-    }
+    private fun dp2px(dp: Float) = (dp * context.resources.displayMetrics.density + 0.5f).toInt()
 
     private fun setDrawable(gd: GradientDrawable, color: Int, strokeColor: Int) {
         gd.setColor(color)
@@ -152,30 +150,24 @@ class RoundViewDelegate(
 
         val bg = StateListDrawable()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isRippleEnable) {
-            setDrawable(gdBackground, backgroundColor, strokeColor)
-            val rippleDrawable = RippleDrawable(
+        setDrawable(gdBackground, backgroundColor, strokeColor)
+        bg.addState(intArrayOf(-android.R.attr.state_pressed), gdBackground)
+        if (backgroundPressColor != Int.MAX_VALUE || strokePressColor != Int.MAX_VALUE) {
+            setDrawable(
+                gdBackgroundPress, if (backgroundPressColor == Int.MAX_VALUE) backgroundColor else backgroundPressColor,
+                if (strokePressColor == Int.MAX_VALUE) strokeColor else strokePressColor,
+            )
+            bg.addState(intArrayOf(android.R.attr.state_pressed), gdBackgroundPress)
+        }
+
+        view.background = if (isRippleEnable) {
+            RippleDrawable(
                 getPressedColorSelector(backgroundColor, backgroundPressColor),
                 gdBackground,
                 null,
             )
-            view.background = rippleDrawable
         } else {
-            setDrawable(gdBackground, backgroundColor, strokeColor)
-            bg.addState(intArrayOf(-android.R.attr.state_pressed), gdBackground)
-            if (backgroundPressColor != Int.MAX_VALUE || strokePressColor != Int.MAX_VALUE) {
-                setDrawable(
-                    gdBackgroundPress, if (backgroundPressColor == Int.MAX_VALUE) backgroundColor else backgroundPressColor,
-                    if (strokePressColor == Int.MAX_VALUE) strokeColor else strokePressColor,
-                )
-                bg.addState(intArrayOf(android.R.attr.state_pressed), gdBackgroundPress)
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                view.background = bg
-            } else {
-                view.setBackgroundDrawable(bg)
-            }
+            bg
         }
 
         if (view is TextView) {
@@ -190,7 +182,6 @@ class RoundViewDelegate(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
     private fun getPressedColorSelector(normalColor: Int, pressedColor: Int): ColorStateList {
         return ColorStateList(
             arrayOf(

@@ -14,7 +14,7 @@ android {
     namespace "com.flyco.roundview"
 
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 21
         targetSdkVersion 33
         versionCode 114
         versionName version
