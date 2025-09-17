@@ -98,6 +98,12 @@ class RoundViewDelegate(val view: View, val context: Context, attrs: AttributeSe
             setBgSelector()
         }
 
+    var clipToOutline
+        get() = view.clipToOutline
+        set(value) {
+            view.clipToOutline = value
+        }
+
     init {
         obtainAttributes(context, attrs)
         obtainAttributesDone = true
@@ -119,6 +125,7 @@ class RoundViewDelegate(val view: View, val context: Context, attrs: AttributeSe
             cornerRadiusBL = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_BL, 0)
             cornerRadiusBR = getDimensionPixelSize(R.styleable.RoundTextView_rv_cornerRadius_BR, 0)
             isRippleEnable = getBoolean(R.styleable.RoundTextView_rv_isRippleEnable, true)
+            clipToOutline = getBoolean(R.styleable.RoundTextView_rv_clipToOutline, true)
         }
     }
 
@@ -148,16 +155,16 @@ class RoundViewDelegate(val view: View, val context: Context, attrs: AttributeSe
     fun setBgSelector() {
         if (!obtainAttributesDone) return
 
-        val bg = StateListDrawable()
-
-        setDrawable(gdBackground, backgroundColor, strokeColor)
-        bg.addState(intArrayOf(-android.R.attr.state_pressed), gdBackground)
-        if (backgroundPressColor != Int.MAX_VALUE || strokePressColor != Int.MAX_VALUE) {
-            setDrawable(
-                gdBackgroundPress, if (backgroundPressColor == Int.MAX_VALUE) backgroundColor else backgroundPressColor,
-                if (strokePressColor == Int.MAX_VALUE) strokeColor else strokePressColor,
-            )
-            bg.addState(intArrayOf(android.R.attr.state_pressed), gdBackgroundPress)
+        val bg = StateListDrawable().apply {
+            setDrawable(gdBackground, backgroundColor, strokeColor)
+            addState(intArrayOf(-android.R.attr.state_pressed), gdBackground)
+            if (backgroundPressColor != Int.MAX_VALUE || strokePressColor != Int.MAX_VALUE) {
+                setDrawable(
+                    gdBackgroundPress, if (backgroundPressColor == Int.MAX_VALUE) backgroundColor else backgroundPressColor,
+                    if (strokePressColor == Int.MAX_VALUE) strokeColor else strokePressColor,
+                )
+                addState(intArrayOf(android.R.attr.state_pressed), gdBackgroundPress)
+            }
         }
 
         view.background = if (isRippleEnable) {
@@ -182,20 +189,8 @@ class RoundViewDelegate(val view: View, val context: Context, attrs: AttributeSe
         }
     }
 
-    private fun getPressedColorSelector(normalColor: Int, pressedColor: Int): ColorStateList {
-        return ColorStateList(
-            arrayOf(
-                intArrayOf(android.R.attr.state_pressed),
-                intArrayOf(android.R.attr.state_focused),
-                intArrayOf(android.R.attr.state_activated),
-                intArrayOf(),
-            ),
-            intArrayOf(
-                pressedColor,
-                pressedColor,
-                pressedColor,
-                normalColor,
-            )
-        )
-    }
+    private fun getPressedColorSelector(normalColor: Int, pressedColor: Int) = ColorStateList(
+        arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf(android.R.attr.state_focused), intArrayOf(android.R.attr.state_activated), intArrayOf()),
+        intArrayOf(pressedColor, pressedColor, pressedColor, normalColor),
+    )
 }
