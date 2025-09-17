@@ -16,7 +16,7 @@
     <attr name="rv_textPressColor" format="color" />
     <!-- 圆角弧度是高度一半-->
     <attr name="rv_isRadiusHalfHeight" format="boolean" />
-    <!-- 圆角矩形宽高相等,取较宽高中大值-->
+    <!-- 圆角矩形宽高相等,取较宽高中小值-->
     <attr name="rv_isWidthHeightEqual" format="boolean" />
     <!-- 圆角弧度,单位dp,TopLeft-->
     <attr name="rv_cornerRadius_TL" format="dimension" />
